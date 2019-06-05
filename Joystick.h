@@ -41,7 +41,7 @@
 class Joystick {
     typedef void (*EventHandler)(); //тип обработчика событий
     enum jsPositions {X_PLUS,X_MINUS,Y_PLUS,Y_MINUS} jspUp = Y_MINUS; //Верхнее положение джойстика
-    SmartButton bt; //кнопка джойстика
+    DigitalButton bt; //кнопка джойстика
     AnalogButton js[JSTK_POSITIONS];  //4 аналоговых кнопки для всех положений джойстика
     //,x_plus,x_minus,y_plus,y_minus;
     uint8_t x_pin, y_pin; //аналоговые пины координат x и y
