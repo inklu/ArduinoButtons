@@ -1,5 +1,5 @@
-#ifndef SMARTBUTTON_H
-#define SMARTBUTTON_H
+#ifndef DIGITALBUTTON_H
+#define DIGITALBUTTON_H
 
 #if ARDUINO >= 100
   #include <Arduino.h>
@@ -7,23 +7,21 @@
   #include <WProgram.h>
 #endif
 
-#ifndef SMART_BUTTON_DEBOUNCE
-#define SMART_BUTTON_DEBOUNCE 10
+#ifndef DIGITAL_BUTTON_DEBOUNCE
+#define DIGITAL_BUTTON_DEBOUNCE 10
 #endif
-#ifndef SMART_BUTTON_HOLD
-#define SMART_BUTTON_HOLD 1000
+#ifndef DIGITAL_BUTTON_HOLD
+#define DIGITAL_BUTTON_HOLD 1000
 #endif
-#ifndef SMART_BUTTON_LONG
-#define SMART_BUTTON_LONG 5000
+#ifndef DIGITAL_BUTTON_LONG
+#define DIGITAL_BUTTON_LONG 5000
 #endif
-#ifndef SMART_BUTTON_IDLE
-#define SMART_BUTTON_IDLE 10000
+#ifndef DIGITAL_BUTTON_IDLE
+#define DIGITAL_BUTTON_IDLE 10000
 #endif
 #ifndef BTNS_EVENTS
 #define BTNS_EVENTS 8
 #endif
-
-
 
 //static const int BUTTON_ANALOG_SIGNAL_TRESHOLD = 10;
 //static const int analog_pins[] = {A0,A1,A2,A3,A4,A5};
@@ -32,7 +30,7 @@
 enum buttonEvent {beOnClick,beOffClick,beOnDblClick,beOffDblClick,beOnHold,beOffHold,beOnLongHold,beOffLongHold};
 
 //Класс кнопки для цифрового пина
-class SmartButton {
+class DigitalButton {
   protected:
     static byte sid;
     byte id;		//идентификатор кнопки для целей отладки 1,2,3,...
@@ -49,8 +47,8 @@ class SmartButton {
  
     void DoAction(enum input in,unsigned long mls); //определить действие и вызвать обработчик
   public:
-    SmartButton(){sid++;id=sid;};
-    SmartButton(byte pin,int pm=INPUT_PULLUP){
+    DigitalButton(){sid++;id=sid;};
+    DigitalButton(byte pin,int pm=INPUT_PULLUP){
       btPin = pin;
       btPinMode = pm;
       pinMode(btPin,btPinMode);
