@@ -15,8 +15,8 @@ void AnalogButton::run(unsigned long mls,int ar){
   
   if (ar >= sigValMin && ar <= sigValMax) DoAction(biPress,mls);
   else DoAction(biRelease,mls);
-  if (mls - pressTimeStamp > SMART_BUTTON_DEBOUNCE) DoAction(biWaitDebounce,mls);
-  if (mls - pressTimeStamp > SMART_BUTTON_HOLD) DoAction(biWaitHold,mls);
-  if (mls - pressTimeStamp > SMART_BUTTON_LONG) DoAction(biWaitLongHold,mls);
-  if (mls - pressTimeStamp > SMART_BUTTON_IDLE) DoAction(biWaitIdle,mls);
+  if (mls - pressTimeStamp > DIGITAL_BUTTON_DEBOUNCE) DoAction(biWaitDebounce,mls);
+  if (mls - pressTimeStamp > DIGITAL_BUTTON_HOLD) DoAction(biWaitHold,mls);
+  if (mls - pressTimeStamp > DIGITAL_BUTTON_LONG) DoAction(biWaitLongHold,mls);
+  if (mls - pressTimeStamp > DIGITAL_BUTTON_IDLE) DoAction(biWaitIdle,mls);
 }
