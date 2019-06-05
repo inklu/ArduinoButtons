@@ -7,17 +7,17 @@
   #include <WProgram.h>
 #endif
 
-#include "SmartButton.h"
+#include "DigitalButton.h"
 #define BUTTON_ANALOG_SIGNAL_TRESHOLD (10)
 
 //для аналогового пина - реализация нескольких кнопок на одном пине
-class AnalogButton: public SmartButton {
+class AnalogButton: public DigitalButton {
 //    static const int BUTTON_ANALOG_SIGNAL_TRESHOLD = 10; //диапазон уровня аналогового сигнала от кнопки 
     uint16_t sigValMin; //минимальное значение сигнала
     uint16_t sigValMax; //максимальное значение сигнала
   public:
     AnalogButton(){};
-    AnalogButton(byte pin,uint16_t sigVal,uint8_t tresh=BUTTON_ANALOG_SIGNAL_TRESHOLD,int pm=INPUT_PULLUP):SmartButton(pin,pm){
+    AnalogButton(byte pin,uint16_t sigVal,uint8_t tresh=BUTTON_ANALOG_SIGNAL_TRESHOLD,int pm=INPUT_PULLUP):DigitalButton(pin,pm){
       sigValMin = sigVal - tresh / 2;
       if(sigValMin > 1023) sigValMin = 0;
       sigValMax = sigVal + tresh / 2;
