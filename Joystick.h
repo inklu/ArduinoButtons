@@ -69,36 +69,36 @@ class Joystick {
     void run(uint32_t mls=0); //обработка сигналов от джойстика
     void setTopPos(); //установка верхней позиции джойстика по умолчанию Y+
     void setTopPos(const byte &_pin,const bool &_mode=HIGH); //установка верхней позиции джойстика
-    virtual void OnClick_UP() { Serial.println("onclick UP"); }
-    virtual void OnClick_DOWN() { Serial.println("onclick DOWN"); }
-    virtual void OnClick_LEFT() { Serial.println("onclick LEFT"); }
-    virtual void OnClick_RIGHT() { Serial.println("onclick RIGHT"); }
-    virtual void OnClick_BUTTON() { Serial.println("onclick BUTTON"); }
-    virtual void OffClick_UP() { Serial.println("offclick UP"); }
-    virtual void OffClick_DOWN() { Serial.println("offclick DOWN"); }
-    virtual void OffClick_LEFT() { Serial.println("offclick LEFT"); }
-    virtual void OffClick_RIGHT() { Serial.println("offclick RIGHT"); }
-    virtual void OffClick_BUTTON() { Serial.println("offclick BUTTON"); }
-    virtual void OnHold_UP() { Serial.println("onhold UP"); }
-    virtual void OnHold_DOWN() { Serial.println("onhold DOWN"); }
-    virtual void OnHold_LEFT() { Serial.println("onhold LEFT"); }
-    virtual void OnHold_RIGHT() { Serial.println("onhold RIGHT"); }
-    virtual void OnHold_BUTTON() { Serial.println("onhold BUTTON"); }
-    virtual void OffHold_UP() { Serial.println("offhold UP"); }
-    virtual void OffHold_DOWN() { Serial.println("offhold DOWN"); }
-    virtual void OffHold_LEFT() { Serial.println("offhold LEFT"); }
-    virtual void OffHold_RIGHT() { Serial.println("offhold RIGHT"); }
-    virtual void OffHold_BUTTON() { Serial.println("offhold BUTTON"); }
-    virtual void OnLongHold_UP() { Serial.println("onlonghold UP"); }
-    virtual void OnLongHold_DOWN() { Serial.println("onlonghold DOWN"); }
-    virtual void OnLongHold_LEFT() { Serial.println("onlonghold LEFT"); }
-    virtual void OnLongHold_RIGHT() { Serial.println("onlonghold RIGHT"); }
-    virtual void OnLongHold_BUTTON() { Serial.println("onlonghold BUTTON"); }
-    virtual void OffLongHold_UP() { Serial.println("offlonghold UP"); }
-    virtual void OffLongHold_DOWN() { Serial.println("offlonghold DOWN"); }
-    virtual void OffLongHold_LEFT() { Serial.println("offlonghold LEFT"); }
-    virtual void OffLongHold_RIGHT() { Serial.println("offlonghold RIGHT"); }
-    virtual void OffLongHold_BUTTON() { Serial.println("offlonghold BUTTON"); }
+    virtual void OnClick_UP() { } //Serial.println("onclick UP"); }
+    virtual void OnClick_DOWN() { } //Serial.println("onclick DOWN"); }
+    virtual void OnClick_LEFT() { } //Serial.println("onclick LEFT"); }
+    virtual void OnClick_RIGHT() { } //Serial.println("onclick RIGHT"); }
+    virtual void OnClick_BUTTON() { } //Serial.println("onclick BUTTON"); }
+    virtual void OffClick_UP() { } //Serial.println("offclick UP"); }
+    virtual void OffClick_DOWN() { } //Serial.println("offclick DOWN"); }
+    virtual void OffClick_LEFT() { } //Serial.println("offclick LEFT"); }
+    virtual void OffClick_RIGHT() { } //Serial.println("offclick RIGHT"); }
+    virtual void OffClick_BUTTON() { } //Serial.println("offclick BUTTON"); }
+    virtual void OnHold_UP() { } //Serial.println("onhold UP"); }
+    virtual void OnHold_DOWN() { } //Serial.println("onhold DOWN"); }
+    virtual void OnHold_LEFT() { } //Serial.println("onhold LEFT"); }
+    virtual void OnHold_RIGHT() { } //Serial.println("onhold RIGHT"); }
+    virtual void OnHold_BUTTON() { } //Serial.println("onhold BUTTON"); }
+    virtual void OffHold_UP() { } //Serial.println("offhold UP"); }
+    virtual void OffHold_DOWN() { } //Serial.println("offhold DOWN"); }
+    virtual void OffHold_LEFT() { } //Serial.println("offhold LEFT"); }
+    virtual void OffHold_RIGHT() { } //Serial.println("offhold RIGHT"); }
+    virtual void OffHold_BUTTON() { } //Serial.println("offhold BUTTON"); }
+    virtual void OnLongHold_UP() { } //Serial.println("onlonghold UP"); }
+    virtual void OnLongHold_DOWN() { } //Serial.println("onlonghold DOWN"); }
+    virtual void OnLongHold_LEFT() { } //Serial.println("onlonghold LEFT"); }
+    virtual void OnLongHold_RIGHT() { } //Serial.println("onlonghold RIGHT"); }
+    virtual void OnLongHold_BUTTON() { } //Serial.println("onlonghold BUTTON"); }
+    virtual void OffLongHold_UP() { } //Serial.println("offlonghold UP"); }
+    virtual void OffLongHold_DOWN() { } //Serial.println("offlonghold DOWN"); }
+    virtual void OffLongHold_LEFT() { } //Serial.println("offlonghold LEFT"); }
+    virtual void OffLongHold_RIGHT() { } //Serial.println("offlonghold RIGHT"); }
+    virtual void OffLongHold_BUTTON() { } //Serial.println("offlonghold BUTTON"); }
 };
 
 #endif
