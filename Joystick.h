@@ -87,7 +87,7 @@ class Joystick {
         enum state btState2; 
         enum input btInput2;
         Joystick *jstk; //address of a joystick object
-        void DoAction(enum input in, unsigned long mls); //overloaded DigitalButton::DoAction(...) method for the second axis position
+        //void DoAction(enum input in, unsigned long mls); //overloaded DigitalButton::DoAction(...) method for the second axis position
     };
 
     explicit Joystick(const uint8_t &_x_pin, 
