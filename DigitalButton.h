@@ -20,7 +20,7 @@
 #define DIGITAL_BUTTON_IDLE 10000
 #endif
 #ifndef BTNS_EVENTS
-#define BTNS_EVENTS 8 //need to revised
+#define BTNS_EVENTS 8 //need to be revised
 #endif
 
 //static const int BUTTON_ANALOG_SIGNAL_TRESHOLD = 10;
@@ -43,7 +43,7 @@ class DigitalButton {
     enum input {biPress,biRelease,biWaitDebounce,biWaitHold,biWaitLongHold,biWaitIdle} 
       btInput = biRelease;
     unsigned long pressTimeStamp; //time when button is pressed
-    byte btEvent=0;
+    byte btEvent=0; //need to be revised
  
     void DoAction(enum input in,unsigned long mls); //define an action & call an handler
   public:
