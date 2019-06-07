@@ -5,6 +5,6 @@ This project consist of three classes for processing buttons & joystick manipula
 
 Virtual class DigitalButton is designed for processing digital signals of buttons.
 
-Virtual class AnalogButton is derived from SmartButton and designed for processing analog signals of buttons. For instance it can be used for processing many buttons connected to single analog pin through resistors.
+Virtual class AnalogButton is derived from DigitalButton and designed for processing analog signals of buttons. For instance it can be used for processing many buttons connected to single analog pin through resistors.
 
-Virtual class Joystick consists of one SmartButton for button and four AnalogButtons for all of joystick postitions.
+Virtual class Joystick consists of one DigitalButton for button and two JoystickAxis derived from AnalogButton for joystick axes. Each axis is like a two analog buttons, one of which is defined for low level of a signal and another for the high one.
