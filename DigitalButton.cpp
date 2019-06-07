@@ -17,10 +17,14 @@ void DigitalButton::run(unsigned long mls){
 }
 
 void DigitalButton::DoAction(enum input in,unsigned long mls){
-  enum state st = btState;
+  DoAction(btState,in,mls);
+}
+
+void DoAction(enum state &_btst, enum input in, unsigned long mls){
+  enum state st = _btst;
   switch(in) {
     case biRelease:
-      btState = bsIdle;
+      _btst = bsIdle;
       switch(st) {
         case bsClick:
           bitSet(btEvent,beOffClick);
@@ -42,7 +46,7 @@ void DigitalButton::DoAction(enum input in,unsigned long mls){
     case biWaitDebounce:
       switch(st) {
         case bsPreClick:
-          btState=bsClick;
+          _btst=bsClick;
           bitSet(btEvent,beOnClick);
           onClick();
           break;
@@ -51,7 +55,7 @@ void DigitalButton::DoAction(enum input in,unsigned long mls){
     case biWaitHold:
       switch(st) {
         case bsClick:
-          btState = bsHold;
+          _btst = bsHold;
           bitSet(btEvent,beOnHold);
           onHold();
           break;
@@ -60,7 +64,7 @@ void DigitalButton::DoAction(enum input in,unsigned long mls){
     case biWaitLongHold:
       switch(st) {
         case bsHold:
-          btState = bsLongHold;
+          _btst = bsLongHold;
           bitSet(btEvent,beOnLongHold);
           onLongHold();
           break;
@@ -69,7 +73,7 @@ void DigitalButton::DoAction(enum input in,unsigned long mls){
     case biWaitIdle:
       switch(st) {
         case bsLongHold:
-          btState=bsForcedIdle;
+          _btst=bsForcedIdle;
           break;
       }
       break;
@@ -77,7 +81,7 @@ void DigitalButton::DoAction(enum input in,unsigned long mls){
       switch(st) {
         case bsIdle:
           pressTimeStamp = mls;
-          btState = bsPreClick;
+          _btst = bsPreClick;
           break;
       }
       break;
