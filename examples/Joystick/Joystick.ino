@@ -4,8 +4,10 @@
 #define CYCLE_STEP (200)
 #endif
 
+//pins of a joystick axes and button
 const byte pinX = A1, pinY = A0, pinBT = 4;
 
+//signals from defined pins for debugging
 void printDebug() {
   Serial.print("X ");
   Serial.print(analogRead(pinX));
@@ -16,10 +18,13 @@ void printDebug() {
 }
 
 // Joystick(x,y,button,sig_high,sig_low,sig_high_treshold,sig_low_treshold): pinX mode = INPUT, pinY mode = INPUT, pinBT mode = INPUT_PULLUP
+//derived Joystick for event handlers redefinitions
 class MyJoystick: public Joystick {
-    String elem[5] = {"UP", "RIGHT", "DOWN", "LEFT", "BUTTON"};
+    String elem[5] = {"UP", "RIGHT", "DOWN", "LEFT", "BUTTON"}; //descriptions of joystick positions
   public:
+    //constructor redefinition
     MyJoystick(const uint8_t &_x_pin, const uint8_t &_y_pin, const uint8_t &_bt_pin): Joystick(_x_pin, _y_pin, _bt_pin) {}
+    //overloaded event handlers
     void onClick(const jsPos jsp) {
       Serial.print("onclick ");
       Serial.println(elem[jsp]);
@@ -62,6 +67,7 @@ class MyJoystick: public Joystick {
     }
 };
 
+//Joystick object declaration
 MyJoystick js(pinX, pinY, pinBT);
 
 uint64_t cycle;
@@ -71,7 +77,7 @@ void setup() {
   Serial.begin(9600);
   delay(100);
   cycle = (uint64_t)millis() + CYCLE_STEP;
-  js.setTopPos(pinX,HIGH); //верхняя позиция джойстика = X+, по умолчанию верхняя позиция Y+
+  js.setTopPos(pinX,HIGH); //setup the top joystick position to X+, Y+ by default
   Serial.println("Start");
 }
 
