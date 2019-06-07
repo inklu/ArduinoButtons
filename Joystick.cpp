@@ -1,6 +1,6 @@
 #include "Joystick.h"
 
-////Кнопка джойстика
+////Joystick button
 void Joystick::JoystickButton::onClick() {
   jstk->onClick(jpBUTTON);
 }
@@ -25,7 +25,7 @@ void Joystick::JoystickButton::offLongHold() {
 void Joystick::JoystickButton::offIdle() {
   jstk->offIdle(jpBUTTON);
 }
-////Ось джойстика
+////Joystick axis
 Joystick::JoystickAxis::JoystickAxis(Joystick *_jstk,
                            const byte &_pin,
                            const uint16_t &_sigVal=JSTK_LOW_SIG,
@@ -39,10 +39,9 @@ Joystick::JoystickAxis::JoystickAxis(Joystick *_jstk,
       if(sigVal2Max > 1023) sigVal2Max = 1023;
     }
 
-//Обработка событий перемещения джойстика по одной оси по уровню сигнала ar
 void Joystick::JoystickAxis::run(unsigned long mls,int ar){
-  AnalogButton::run(mls,ar); //обработка событий наклона джойстика в положение low
-  //обработка событий наклона джойстика в положение high
+  AnalogButton::run(mls,ar); //processing of a low level of a signal, positions X-\Y-
+  //processing of a high level of a signal, positions X+\Y+
   if (ar >= sigVal2Min && ar <= sigVal2Max) DoAction(biPress,mls);
   else DoAction(biRelease,mls);
   if (mls - pressTimeStamp > DIGITAL_BUTTON_DEBOUNCE) DoAction(biWaitDebounce,mls);
@@ -50,12 +49,13 @@ void Joystick::JoystickAxis::run(unsigned long mls,int ar){
   if (mls - pressTimeStamp > DIGITAL_BUTTON_LONG) DoAction(biWaitLongHold,mls);
   if (mls - pressTimeStamp > DIGITAL_BUTTON_IDLE) DoAction(biWaitIdle,mls);
 }
-//Обработка событий аналоговой кнопки с чтением сигнала с пина
+
 void Joystick::JoystickAxis::run(unsigned long mls){
   if (!mls) mls = millis();
   int ar = analogRead(btPin);
   run(mls,ar);
 }
+
 void Joystick::JoystickAxis::DoAction(enum input in,unsigned long mls){
   enum state st = btState2;
   switch(in) {
@@ -144,7 +144,7 @@ void Joystick::JoystickAxis::offIdle(const bool plus) {
 }
 
 
-////Джойстик новый
+////Joystick
 Joystick::Joystick(const uint8_t &_x_pin, 
                      const uint8_t &_y_pin,
                      const uint8_t &_bt_pin,
@@ -160,18 +160,18 @@ Joystick::Joystick(const uint8_t &_x_pin,
 }
 
 jsPos Joystick::getAxisPosition(const JoystickAxis &ja, const bool plus){  
-  //Позиция верхушки Y+(0),X-(1),Y-(2),X+(3)
+  //Top position Y+(0),X-(1),Y-(2),X+(3)
   jsPos jpDef;
-  //для позиции Y+
+  //for position Y+
   if(&ja==&jsAxisY && plus==HIGH) jpDef = jpUP; //0 3 2 1
-  //для позиции X-
+  //for position X-
   if(&ja==&jsAxisX && plus==LOW) jpDef = jpRIGHT; //1 0 3 2
-  //для позиции Y-
+  //for position Y-
   if(&ja==&jsAxisY && plus==LOW) jpDef = jpDOWN; //2 1 0 3
-  //для позиции X+
+  //for position X+
   if(&ja==&jsAxisX && plus==HIGH) jpDef = jpLEFT; //3 2 1 0
 
-  //корректировка позиции в зависимости от верхушки
+  //adjust of a required position according to the top position
   short int pos = jpDef - jhpTop;
   return (pos<0)?(pos+4):(pos);
 }

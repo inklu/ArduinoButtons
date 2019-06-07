@@ -10,38 +10,38 @@
 #include "AnalogButton.h"
 
 #ifndef JSTK_LOW_SIG
-#define JSTK_LOW_SIG (40)
+#define JSTK_LOW_SIG (40) //medium level of low signal of a joystick position
 #endif
 
 #ifndef JSTK_LOW_TRESHOLD
-#define JSTK_LOW_TRESHOLD (80)
+#define JSTK_LOW_TRESHOLD (80) //treshold of low signal
 #endif
 
 #ifndef JSTK_HIGH_SIG
-#define JSTK_HIGH_SIG (1000)
+#define JSTK_HIGH_SIG (1000) //medium level of high signal of a joystick position
 #endif
 
 #ifndef JSTK_HIGH_TRESHOLD
-#define JSTK_HIGH_TRESHOLD (46)
+#define JSTK_HIGH_TRESHOLD (46) //treshold of high signal
 #endif
 
-enum jsPos {jpUP,jpRIGHT,jpDOWN,jpLEFT,jpBUTTON}; //положения джойстика
+enum jsPos {jpUP,jpRIGHT,jpDOWN,jpLEFT,jpBUTTON}; //Joystick positions with button
 
-////Джойстик новая версия на JoystickAxis
-    /*констркутор джойстика: 
-     * _x_pin - аналоговый пин координаты X, режим INPUT
-     * _y_pin - аналоговый пин координаты Y, режим INPUT
-     * _bt_pin - цифровой пин кнопки джойстика, режим INPUT_PULLUP
-     * _sig_high - средний уровень сигнала аналоговых пинов для положений X+ и Y+, по умолчанию JSTK_HIGH_SIG
-     * _sig_low - средний уровень сигнала аналоговых пинов для положений X- и Y-, по умолчанию JSTK_LOW_SIG
-     * _sig_high_ts - диапазон отклонения сигнала аналоговых пинов для положений X+ и Y+, по умолчанию JSTK_HIGH_TRESHOLD
-     * _sig_los_ts - диапазон отклонения сигнала аналоговых пинов для положений X- и Y-, по умолчанию JSTK_LOW_TRESHOLD
+////Joystick class
+    /*Joystick constructor: 
+     * _x_pin - analog pin of axis X, pin mode INPUT
+     * _y_pin - analog pin of axis Y, pin mode INPUT
+     * _bt_pin - digital pin of joystick button, pin mode INPUT_PULLUP by default
+     * _sig_high - medium level of a high signal for positions X+ & Y+, =JSTK_HIGH_SIG by default
+     * _sig_low - medium level of a low signal for positions X- & Y-, =JSTK_LOW_SIG by default
+     * _sig_high_ts - treshold of a high signal for positions X+ и Y+, =JSTK_HIGH_TRESHOLD by default
+     * _sig_los_ts - treshold of a low signal for positions X- и Y-, =JSTK_LOW_TRESHOLD by default
      */
 class Joystick {
   protected:
-    enum jsHardPos {jhpY_PLUS,jhpX_MINUS,jhpY_MINUS,jhpX_PLUS};//аппаратные положения джойстика
+    enum jsHardPos {jhpY_PLUS,jhpX_MINUS,jhpY_MINUS,jhpX_PLUS};//hardware positions of a joystick
   public:
-////Кнопка джойстика - наследник DigitalButton, jstk-джойстик, к которому привязана кнопка
+////Joystick button class - inherited from DigitalButton
     class JoystickButton:public DigitalButton {
       public:
         JoystickButton(Joystick *_jstk, byte pin,int pm=INPUT_PULLUP):jstk(_jstk),DigitalButton(pin,pm){}
@@ -54,19 +54,19 @@ class Joystick {
         void offLongHold();
         void offIdle();
       private:
-        Joystick *jstk; //ссылка на джойстик
+        Joystick *jstk; //is an address of a linked joystick object
     };
 
-////Ось джойстика - наследник AnalogButton, сигнал low=положение X-\Y-, сигнал high=положение X+\Y+
+////Joystick axis class - inherited from AnalogButton, low level of a signal is equal to positions X- & Y-, high level of a signal is equal to positions X+ & Y+
     class JoystickAxis:public AnalogButton {
       public:
         JoystickAxis(){};
         JoystickAxis(Joystick *_jstk,const byte &_pin,const uint16_t &_sigVal=JSTK_LOW_SIG,const uint16_t &_sigVal2=JSTK_HIGH_SIG,const uint8_t &_tresh=JSTK_LOW_TRESHOLD,const uint8_t &_tresh2=JSTK_HIGH_TRESHOLD,const int &_pm=INPUT_PULLUP);
-        void run(unsigned long mls=0); //обработка сигналов кнопки с чтением пина
-        void run(unsigned long mls, int ar); //обработка сигналов кнопки по уровню сигнала ar
+        void run(unsigned long mls=0); //processing of "buttons" (from X or Y) signal with pin reading
+        void run(unsigned long mls, int ar); //processing of a signal level <ar>
         //void onClick() {Serial.print(sigValMin);Serial.print("\t");Serial.print(id);Serial.println(" onClick");};
-        void onClick(const bool plus); //plus - направление нажатия по одной оси джойстика true=X+\Y+,false=X-\Y-
-        void onClick(){ onClick(false); } //переопределение вызова обработчика в AnalogButton для наклона джойстика в положение low
+        void onClick(const bool plus); //plus is a direction on a single axis defined by the level of a signal true=X+\Y+,false=X-\Y-
+        void onClick(){ onClick(false); } //overloaded definition of AnalogButton::onClick() method for low level of a signal, X-\Y-
         void onHold(const bool plus);
         void onHold(){ onHold(false); }
         void onLongHold(const bool plus);
@@ -82,12 +82,12 @@ class Joystick {
         void offIdle(const bool plus);
         void offIdle(){ offIdle(false); }
       private:
-        uint16_t sigVal2Min; //минимальное значение сигнала во втором положении джойстика (HIGH)
-        uint16_t sigVal2Max; //максимальное значение сигнала во втором положении джойстика (HIGH)
-        enum state btState2;
+        uint16_t sigVal2Min; //minimum of a signal level for the second axis position (HIGH level)
+        uint16_t sigVal2Max; //maximum of a signal level for the second axis position (HIGH level)
+        enum state btState2; 
         enum input btInput2;
-        Joystick *jstk; //ссылка на джойстик
-        void DoAction(enum input in, unsigned long mls); //определить действие и вызвать обработчик
+        Joystick *jstk; //address of a joystick object
+        void DoAction(enum input in, unsigned long mls); //overloaded DigitalButton::DoAction(...) method for the second axis position
     };
 
     explicit Joystick(const uint8_t &_x_pin, 
@@ -97,9 +97,9 @@ class Joystick {
                        const uint16_t &_sig_low=JSTK_LOW_SIG,
                        const uint16_t &_sig_high_ts=JSTK_HIGH_TRESHOLD,
                        const uint16_t &_sig_low_ts=JSTK_LOW_TRESHOLD);
-    void run(uint32_t mls=0); //обработка сигналов джойстика
-    //void setTopPos(const jsHardPos _jhp){ jhpTop=_jhp; }; //установка верхней позиции джойстика
-    void setTopPos(const byte pin, const bool plus);//установка позиции по номеру пина и уровня сигнала
+    void run(uint32_t mls=0); //processing of joystick manipulation signals
+    //void setTopPos(const jsHardPos _jhp){ jhpTop=_jhp; }; 
+    void setTopPos(const byte pin, const bool plus);//setup the top position of a joystick by the pin and the signal level
     jsPos getAxisPosition(const JoystickAxis &ja, const bool plus);
     inline virtual void onClick(const jsPos jsp){};
     inline virtual void onHold(const jsPos jsp){};
@@ -111,9 +111,9 @@ class Joystick {
     inline virtual void offIdle(const jsPos jsp){};
   private:
     JoystickAxis jsAxisX,jsAxisY;
-    JoystickButton bt; //кнопка джойстика
-    byte x_pin,y_pin; //пины осей
-    jsHardPos jhpTop=jhpY_PLUS;//верхнее положение джойстика, по умолчанию Y+
+    JoystickButton bt; //joystick button object
+    byte x_pin,y_pin; //X&Y axes pins
+    jsHardPos jhpTop=jhpY_PLUS;//top joystick position, =Y+ by default
 };
 
 
