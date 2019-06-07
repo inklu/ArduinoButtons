@@ -20,7 +20,7 @@ void DigitalButton::DoAction(enum input in,unsigned long mls){
   DoAction(btState,in,mls);
 }
 
-void DoAction(enum state &_btst, enum input in, unsigned long mls){
+void DigitalButton::DoAction(enum state &_btst, enum input in, unsigned long mls){
   enum state st = _btst;
   switch(in) {
     case biRelease:
