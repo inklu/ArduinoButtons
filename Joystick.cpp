@@ -42,12 +42,12 @@ Joystick::JoystickAxis::JoystickAxis(Joystick *_jstk,
 void Joystick::JoystickAxis::run(unsigned long mls,int ar){
   AnalogButton::run(mls,ar); //processing of a low level of a signal, positions X-\Y-
   //processing of a high level of a signal, positions X+\Y+
-  if (ar >= sigVal2Min && ar <= sigVal2Max) DoAction(biPress,mls);
-  else DoAction(biRelease,mls);
-  if (mls - pressTimeStamp > DIGITAL_BUTTON_DEBOUNCE) DoAction(biWaitDebounce,mls);
-  if (mls - pressTimeStamp > DIGITAL_BUTTON_HOLD) DoAction(biWaitHold,mls);
-  if (mls - pressTimeStamp > DIGITAL_BUTTON_LONG) DoAction(biWaitLongHold,mls);
-  if (mls - pressTimeStamp > DIGITAL_BUTTON_IDLE) DoAction(biWaitIdle,mls);
+  if (ar >= sigVal2Min && ar <= sigVal2Max) DoAction(btState2,biPress,mls);
+  else DoAction(btState2,biRelease,mls);
+  if (mls - pressTimeStamp > DIGITAL_BUTTON_DEBOUNCE) DoAction(btState2,biWaitDebounce,mls);
+  if (mls - pressTimeStamp > DIGITAL_BUTTON_HOLD) DoAction(btState2,biWaitHold,mls);
+  if (mls - pressTimeStamp > DIGITAL_BUTTON_LONG) DoAction(btState2,biWaitLongHold,mls);
+  if (mls - pressTimeStamp > DIGITAL_BUTTON_IDLE) DoAction(btState2,biWaitIdle,mls);
 }
 
 void Joystick::JoystickAxis::run(unsigned long mls){
@@ -56,6 +56,7 @@ void Joystick::JoystickAxis::run(unsigned long mls){
   run(mls,ar);
 }
 
+/*
 void Joystick::JoystickAxis::DoAction(enum input in,unsigned long mls){
   enum state st = btState2;
   switch(in) {
@@ -116,7 +117,7 @@ void Joystick::JoystickAxis::DoAction(enum input in,unsigned long mls){
       }
       break;
   }
-}
+}*/
 
 void Joystick::JoystickAxis::onClick(const bool plus) {
   jstk->onClick(jstk->getAxisPosition(*this,plus));
