@@ -46,6 +46,7 @@ class DigitalButton {
     byte btEvent=0; //need to be revised
  
     void DoAction(enum input in,unsigned long mls); //define an action & call an handler
+    void DoAction(enum state _btst, enum input in, unsigned long mls);
   public:
     DigitalButton(){sid++;id=sid;};
     DigitalButton(byte pin,int pm=INPUT_PULLUP){
