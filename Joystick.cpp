@@ -1,78 +1,193 @@
 #include "Joystick.h"
 
+////Кнопка джойстика
+void Joystick::JoystickButton::onClick() {
+  jstk->onClick(jpBUTTON);
+}
+void Joystick::JoystickButton::onHold() {
+  jstk->onHold(jpBUTTON);
+}
+void Joystick::JoystickButton::onLongHold() {
+  jstk->onLongHold(jpBUTTON);
+}
+void Joystick::JoystickButton::onIdle() {
+  jstk->onIdle(jpBUTTON);
+}
+void Joystick::JoystickButton::offClick() {
+  jstk->offClick(jpBUTTON);
+}
+void Joystick::JoystickButton::offHold() {
+  jstk->offHold(jpBUTTON);
+}
+void Joystick::JoystickButton::offLongHold() {
+  jstk->offLongHold(jpBUTTON);
+}
+void Joystick::JoystickButton::offIdle() {
+  jstk->offIdle(jpBUTTON);
+}
+////Ось джойстика
+Joystick::JoystickAxis::JoystickAxis(Joystick *_jstk,
+                           const byte &_pin,
+                           const uint16_t &_sigVal=JSTK_LOW_SIG,
+                           const uint16_t &_sigVal2=JSTK_HIGH_SIG,
+                           const uint8_t &_tresh=JSTK_LOW_TRESHOLD,
+                           const uint8_t &_tresh2=JSTK_HIGH_TRESHOLD,
+                           const int &_pm=INPUT_PULLUP):jstk(_jstk),AnalogButton(_pin,_sigVal,_tresh,_pm) {
+      sigVal2Min = _sigVal2 - _tresh2 / 2;
+      if(sigVal2Min > 1023) sigVal2Min = 0;
+      sigVal2Max = _sigVal2 + _tresh2 / 2;
+      if(sigVal2Max > 1023) sigVal2Max = 1023;
+    }
+
+//Обработка событий перемещения джойстика по одной оси по уровню сигнала ar
+void Joystick::JoystickAxis::run(unsigned long mls,int ar){
+  AnalogButton::run(mls,ar); //обработка событий наклона джойстика в положение low
+  //обработка событий наклона джойстика в положение high
+  if (ar >= sigVal2Min && ar <= sigVal2Max) DoAction(biPress,mls);
+  else DoAction(biRelease,mls);
+  if (mls - pressTimeStamp > DIGITAL_BUTTON_DEBOUNCE) DoAction(biWaitDebounce,mls);
+  if (mls - pressTimeStamp > DIGITAL_BUTTON_HOLD) DoAction(biWaitHold,mls);
+  if (mls - pressTimeStamp > DIGITAL_BUTTON_LONG) DoAction(biWaitLongHold,mls);
+  if (mls - pressTimeStamp > DIGITAL_BUTTON_IDLE) DoAction(biWaitIdle,mls);
+}
+//Обработка событий аналоговой кнопки с чтением сигнала с пина
+void Joystick::JoystickAxis::run(unsigned long mls){
+  if (!mls) mls = millis();
+  int ar = analogRead(btPin);
+  run(mls,ar);
+}
+void Joystick::JoystickAxis::DoAction(enum input in,unsigned long mls){
+  enum state st = btState2;
+  switch(in) {
+    case biRelease:
+      btState2 = bsIdle;
+      switch(st) {
+        case bsClick:
+          offClick(true);
+          break;
+        case bsHold:
+          offHold(true);
+          break;
+        case bsLongHold:
+          offLongHold(true);
+          break;
+        case bsForcedIdle:
+          offIdle(true);
+          break;
+      }
+      break;
+    case biWaitDebounce:
+      switch(st) {
+        case bsPreClick:
+          btState2=bsClick;
+          onClick(true);
+          break;
+      }
+      break;
+    case biWaitHold:
+      switch(st) {
+        case bsClick:
+          btState2 = bsHold;
+          onHold(true);
+          break;
+      }
+      break;
+    case biWaitLongHold:
+      switch(st) {
+        case bsHold:
+          btState2 = bsLongHold;
+          onLongHold(true);
+          break;
+      }
+      break;
+    case biWaitIdle:
+      switch(st) {
+        case bsLongHold:
+          btState2=bsForcedIdle;
+          break;
+      }
+      break;
+    case biPress:
+      switch(st) {
+        case bsIdle:
+          pressTimeStamp = mls;
+          btState2 = bsPreClick;
+          break;
+      }
+      break;
+  }
+}
+
+void Joystick::JoystickAxis::onClick(const bool plus) {
+  jstk->onClick(jstk->getAxisPosition(*this,plus));
+}
+void Joystick::JoystickAxis::onHold(const bool plus) {
+  jstk->onHold(jstk->getAxisPosition(*this,plus));
+}
+void Joystick::JoystickAxis::onLongHold(const bool plus) {
+  jstk->onLongHold(jstk->getAxisPosition(*this,plus));
+}
+void Joystick::JoystickAxis::onIdle(const bool plus) {
+  jstk->onIdle(jstk->getAxisPosition(*this,plus));
+}
+void Joystick::JoystickAxis::offClick(const bool plus) {
+  jstk->offClick(jstk->getAxisPosition(*this,plus));
+}
+void Joystick::JoystickAxis::offHold(const bool plus) {
+  jstk->offHold(jstk->getAxisPosition(*this,plus));
+}
+void Joystick::JoystickAxis::offLongHold(const bool plus) {
+  jstk->offLongHold(jstk->getAxisPosition(*this,plus));
+}
+void Joystick::JoystickAxis::offIdle(const bool plus) {
+  jstk->offIdle(jstk->getAxisPosition(*this,plus));
+}
+
+
+////Джойстик новый
 Joystick::Joystick(const uint8_t &_x_pin, 
-                   const uint8_t &_y_pin,
-                   const uint8_t &_bt_pin,
-                   const uint16_t &_sig_high=JSTK_HIGH_SIG,
-                   const uint16_t &_sig_low=JSTK_LOW_SIG,
-                   const uint16_t &_sig_high_ts=JSTK_HIGH_TRESHOLD,
-                   const uint16_t &_sig_low_ts=JSTK_LOW_TRESHOLD ):bt(_bt_pin),
-                                                                   x_pin(_x_pin),
-                                                                   y_pin(_y_pin),
-                                                                   js{ AnalogButton(_x_pin,_sig_high,_sig_high_ts,INPUT),
-                                                                       AnalogButton(_x_pin,_sig_low,_sig_low_ts,INPUT),
-                                                                       AnalogButton(_y_pin,_sig_high,_sig_high_ts,INPUT),
-                                                                       AnalogButton(_y_pin,_sig_low,_sig_low_ts,INPUT) }
-{
-  setTopPos(); //по умолчанию верхняя позиция джойстика - это Y+
+                     const uint8_t &_y_pin,
+                     const uint8_t &_bt_pin,
+                     const uint16_t &_sig_high=JSTK_HIGH_SIG,
+                     const uint16_t &_sig_low=JSTK_LOW_SIG,
+                     const uint16_t &_sig_high_ts=JSTK_HIGH_TRESHOLD,
+                     const uint16_t &_sig_low_ts=JSTK_LOW_TRESHOLD ): bt(this,_bt_pin),
+                                                                      x_pin(_x_pin),
+                                                                      y_pin(_y_pin),
+                                                                      jsAxisX(this,_x_pin,_sig_low,_sig_high,_sig_low_ts,_sig_high_ts,INPUT),
+                                                                      jsAxisY(this,_y_pin,_sig_low,_sig_high,_sig_low_ts,_sig_high_ts,INPUT) {
+
+}
+
+jsPos Joystick::getAxisPosition(const JoystickAxis &ja, const bool plus){  
+  //Позиция верхушки Y+(0),X-(1),Y-(2),X+(3)
+  jsPos jpDef;
+  //для позиции Y+
+  if(&ja==&jsAxisY && plus==HIGH) jpDef = jpUP; //0 3 2 1
+  //для позиции X-
+  if(&ja==&jsAxisX && plus==LOW) jpDef = jpRIGHT; //1 0 3 2
+  //для позиции Y-
+  if(&ja==&jsAxisY && plus==LOW) jpDef = jpDOWN; //2 1 0 3
+  //для позиции X+
+  if(&ja==&jsAxisX && plus==HIGH) jpDef = jpLEFT; //3 2 1 0
+
+  //корректировка позиции в зависимости от верхушки
+  short int pos = jpDef - jhpTop;
+  return (pos<0)?(pos+4):(pos);
 }
 
 void Joystick::run(uint32_t mls=0){
   if (!mls) mls = millis();
   bt.run(mls);
-  uint16_t x_sig = analogRead(x_pin);
-  uint16_t y_sig = analogRead(y_pin);
-  for(byte i = 0; i<JSTK_POSITIONS;i++) js[i].run(mls);
-  DoAction();
+  jsAxisX.run(mls);
+  jsAxisY.run(mls);
 }
 
-void Joystick::setTopPos(){
-  setTopPos(y_pin);
-}
-
-void Joystick::setTopPos(const byte &_pin,const bool &_mode) {
-  if(_pin == x_pin && _mode == HIGH) jspUp = X_PLUS;
-  else if(_pin == x_pin && _mode == LOW) jspUp = X_MINUS;
-  else if(_pin == y_pin && _mode == HIGH) jspUp = Y_PLUS;
-  else if(_pin == y_pin && _mode == LOW) jspUp = Y_MINUS;
-
-  switch(jspUp) {
-    case X_PLUS:
-      JSTK_EVENT_MAPPING(OnClick,RIGHT,DOWN,LEFT,UP)
-      JSTK_EVENT_MAPPING(OffClick,RIGHT,DOWN,LEFT,UP)
-      JSTK_EVENT_MAPPING(OnHold,RIGHT,DOWN,LEFT,UP)
-      JSTK_EVENT_MAPPING(OffHold,RIGHT,DOWN,LEFT,UP)
-      break;
-    case X_MINUS:
-      JSTK_EVENT_MAPPING(OnClick,LEFT,UP,RIGHT,DOWN)
-      JSTK_EVENT_MAPPING(OffClick,LEFT,UP,RIGHT,DOWN)
-      JSTK_EVENT_MAPPING(OnHold,LEFT,UP,RIGHT,DOWN)
-      JSTK_EVENT_MAPPING(OffHold,LEFT,UP,RIGHT,DOWN)
-      break;
-    case Y_PLUS:
-      JSTK_EVENT_MAPPING(OnClick,UP,RIGHT,DOWN,LEFT)
-      JSTK_EVENT_MAPPING(OffClick,UP,RIGHT,DOWN,LEFT)
-      JSTK_EVENT_MAPPING(OnHold,UP,RIGHT,DOWN,LEFT)
-      JSTK_EVENT_MAPPING(OffHold,UP,RIGHT,DOWN,LEFT)
-      break;
-    case Y_MINUS:
-      JSTK_EVENT_MAPPING(OnClick,DOWN,LEFT,UP,RIGHT)
-      JSTK_EVENT_MAPPING(OffClick,DOWN,LEFT,UP,RIGHT)
-      JSTK_EVENT_MAPPING(OnHold,DOWN,LEFT,UP,RIGHT)
-      JSTK_EVENT_MAPPING(OffHold,DOWN,LEFT,UP,RIGHT)
-      break;
-  }
-}
-
-void Joystick::DoAction() {
-  if(bt.checkEvent(beOnClick)) { OnClick_BUTTON(); bt.flushEvents(); }
-  if(bt.checkEvent(beOffClick)) { OffClick_BUTTON(); bt.flushEvents(); }
-  if(bt.checkEvent(beOnHold)) { OnHold_BUTTON(); bt.flushEvents(); }
-  if(bt.checkEvent(beOffHold)) { OffHold_BUTTON(); bt.flushEvents(); }
-
-  for(byte jp=0;jp<JSTK_POSITIONS;jp++){
-    for(byte be=0;be<BTNS_EVENTS;be++){
-      if(js[jp].checkEvent(be)) { onEvent[jp][be](); js[jp].flushEvents(); }
-    }
-  }
+void Joystick::setTopPos(const byte pin,const bool plus){
+  if(pin==x_pin){
+    if(plus) jhpTop = jhpX_PLUS;
+    else jhpTop = jhpX_MINUS; }
+  else if(pin==y_pin){
+    if(plus) jhpTop = jhpY_PLUS;
+    else jhpTop = jhpY_MINUS; }
 }

@@ -25,31 +25,9 @@
 #define JSTK_HIGH_TRESHOLD (46)
 #endif
 
-#ifndef JSTK_POSITIONS
-#define JSTK_POSITIONS 4
-#endif
+enum jsPos {jpUP,jpRIGHT,jpDOWN,jpLEFT,jpBUTTON}; //положения джойстика
 
-#ifndef JSTK_EVENT_MAPPING(BE,JP_YPLUS,JP_XMINUS,JP_YMINUS,JP_XPLUS)
-#define JSTK_EVENT_MAPPING(BE,JP_YPLUS,JP_XMINUS,JP_YMINUS,JP_XPLUS) { \
-      onEvent[Y_PLUS][be##BE] = (void*)&BE##_##JP_YPLUS ; \
-      onEvent[X_MINUS][be##BE] = (void*)&BE##_##JP_XMINUS ; \
-      onEvent[Y_MINUS][be##BE] = (void*)&BE##_##JP_YMINUS ; \
-      onEvent[X_PLUS][be##BE] = (void*)&BE##_##JP_XPLUS ; }
-#endif
-
-
-class Joystick {
-    typedef void (*EventHandler)(); //тип обработчика событий
-    enum jsPositions {X_PLUS,X_MINUS,Y_PLUS,Y_MINUS} jspUp = Y_MINUS; //Верхнее положение джойстика
-    DigitalButton bt; //кнопка джойстика
-    AnalogButton js[JSTK_POSITIONS];  //4 аналоговых кнопки для всех положений джойстика
-    //,x_plus,x_minus,y_plus,y_minus;
-    uint8_t x_pin, y_pin; //аналоговые пины координат x и y
-    void DoAction(); //вызов обработчиков событий
-    EventHandler onEvent[JSTK_POSITIONS][BTNS_EVENTS];//массив ссылок функций - обработчиков событий. первое измерение - положение джойстика, второе - событие кнопки
-
-  public:
-    explicit Joystick(){};
+////Джойстик новая версия на JoystickAxis
     /*констркутор джойстика: 
      * _x_pin - аналоговый пин координаты X, режим INPUT
      * _y_pin - аналоговый пин координаты Y, режим INPUT
@@ -59,46 +37,84 @@ class Joystick {
      * _sig_high_ts - диапазон отклонения сигнала аналоговых пинов для положений X+ и Y+, по умолчанию JSTK_HIGH_TRESHOLD
      * _sig_los_ts - диапазон отклонения сигнала аналоговых пинов для положений X- и Y-, по умолчанию JSTK_LOW_TRESHOLD
      */
+class Joystick {
+  protected:
+    enum jsHardPos {jhpY_PLUS,jhpX_MINUS,jhpY_MINUS,jhpX_PLUS};//аппаратные положения джойстика
+  public:
+////Кнопка джойстика - наследник DigitalButton, jstk-джойстик, к которому привязана кнопка
+    class JoystickButton:public DigitalButton {
+      public:
+        JoystickButton(Joystick *_jstk, byte pin,int pm=INPUT_PULLUP):jstk(_jstk),DigitalButton(pin,pm){}
+        void onClick();
+        void onHold();
+        void onLongHold();
+        void onIdle();
+        void offClick();
+        void offHold();
+        void offLongHold();
+        void offIdle();
+      private:
+        Joystick *jstk; //ссылка на джойстик
+    };
+
+////Ось джойстика - наследник AnalogButton, сигнал low=положение X-\Y-, сигнал high=положение X+\Y+
+    class JoystickAxis:public AnalogButton {
+      public:
+        JoystickAxis(){};
+        JoystickAxis(Joystick *_jstk,const byte &_pin,const uint16_t &_sigVal=JSTK_LOW_SIG,const uint16_t &_sigVal2=JSTK_HIGH_SIG,const uint8_t &_tresh=JSTK_LOW_TRESHOLD,const uint8_t &_tresh2=JSTK_HIGH_TRESHOLD,const int &_pm=INPUT_PULLUP);
+        void run(unsigned long mls=0); //обработка сигналов кнопки с чтением пина
+        void run(unsigned long mls, int ar); //обработка сигналов кнопки по уровню сигнала ar
+        //void onClick() {Serial.print(sigValMin);Serial.print("\t");Serial.print(id);Serial.println(" onClick");};
+        void onClick(const bool plus); //plus - направление нажатия по одной оси джойстика true=X+\Y+,false=X-\Y-
+        void onClick(){ onClick(false); } //переопределение вызова обработчика в AnalogButton для наклона джойстика в положение low
+        void onHold(const bool plus);
+        void onHold(){ onHold(false); }
+        void onLongHold(const bool plus);
+        void onLongHold(){ onLongHold(false); }
+        void onIdle(const bool plus);
+        void onIdle(){ onIdle(false); }
+        void offClick(const bool plus);
+        void offClick(){ offClick(false); } 
+        void offHold(const bool plus);
+        void offHold(){ offHold(false); }
+        void offLongHold(const bool plus);
+        void offLongHold(){ offLongHold(false); }
+        void offIdle(const bool plus);
+        void offIdle(){ offIdle(false); }
+      private:
+        uint16_t sigVal2Min; //минимальное значение сигнала во втором положении джойстика (HIGH)
+        uint16_t sigVal2Max; //максимальное значение сигнала во втором положении джойстика (HIGH)
+        enum state btState2;
+        enum input btInput2;
+        Joystick *jstk; //ссылка на джойстик
+        void DoAction(enum input in, unsigned long mls); //определить действие и вызвать обработчик
+    };
+
     explicit Joystick(const uint8_t &_x_pin, 
-                      const uint8_t &_y_pin, 
-                      const uint8_t &_bt_pin, 
-                      const uint16_t &_sig_high=JSTK_HIGH_SIG,
-                      const uint16_t &_sig_low=JSTK_LOW_SIG,
-                      const uint16_t &_sig_high_ts=JSTK_HIGH_TRESHOLD,
-                      const uint16_t &_sig_low_ts=JSTK_LOW_TRESHOLD);
-    void run(uint32_t mls=0); //обработка сигналов от джойстика
-    void setTopPos(); //установка верхней позиции джойстика по умолчанию Y+
-    void setTopPos(const byte &_pin,const bool &_mode=HIGH); //установка верхней позиции джойстика
-    virtual void OnClick_UP() { } //Serial.println("onclick UP"); }
-    virtual void OnClick_DOWN() { } //Serial.println("onclick DOWN"); }
-    virtual void OnClick_LEFT() { } //Serial.println("onclick LEFT"); }
-    virtual void OnClick_RIGHT() { } //Serial.println("onclick RIGHT"); }
-    virtual void OnClick_BUTTON() { } //Serial.println("onclick BUTTON"); }
-    virtual void OffClick_UP() { } //Serial.println("offclick UP"); }
-    virtual void OffClick_DOWN() { } //Serial.println("offclick DOWN"); }
-    virtual void OffClick_LEFT() { } //Serial.println("offclick LEFT"); }
-    virtual void OffClick_RIGHT() { } //Serial.println("offclick RIGHT"); }
-    virtual void OffClick_BUTTON() { } //Serial.println("offclick BUTTON"); }
-    virtual void OnHold_UP() { } //Serial.println("onhold UP"); }
-    virtual void OnHold_DOWN() { } //Serial.println("onhold DOWN"); }
-    virtual void OnHold_LEFT() { } //Serial.println("onhold LEFT"); }
-    virtual void OnHold_RIGHT() { } //Serial.println("onhold RIGHT"); }
-    virtual void OnHold_BUTTON() { } //Serial.println("onhold BUTTON"); }
-    virtual void OffHold_UP() { } //Serial.println("offhold UP"); }
-    virtual void OffHold_DOWN() { } //Serial.println("offhold DOWN"); }
-    virtual void OffHold_LEFT() { } //Serial.println("offhold LEFT"); }
-    virtual void OffHold_RIGHT() { } //Serial.println("offhold RIGHT"); }
-    virtual void OffHold_BUTTON() { } //Serial.println("offhold BUTTON"); }
-    virtual void OnLongHold_UP() { } //Serial.println("onlonghold UP"); }
-    virtual void OnLongHold_DOWN() { } //Serial.println("onlonghold DOWN"); }
-    virtual void OnLongHold_LEFT() { } //Serial.println("onlonghold LEFT"); }
-    virtual void OnLongHold_RIGHT() { } //Serial.println("onlonghold RIGHT"); }
-    virtual void OnLongHold_BUTTON() { } //Serial.println("onlonghold BUTTON"); }
-    virtual void OffLongHold_UP() { } //Serial.println("offlonghold UP"); }
-    virtual void OffLongHold_DOWN() { } //Serial.println("offlonghold DOWN"); }
-    virtual void OffLongHold_LEFT() { } //Serial.println("offlonghold LEFT"); }
-    virtual void OffLongHold_RIGHT() { } //Serial.println("offlonghold RIGHT"); }
-    virtual void OffLongHold_BUTTON() { } //Serial.println("offlonghold BUTTON"); }
+                       const uint8_t &_y_pin, 
+                       const uint8_t &_bt_pin, 
+                       const uint16_t &_sig_high=JSTK_HIGH_SIG,
+                       const uint16_t &_sig_low=JSTK_LOW_SIG,
+                       const uint16_t &_sig_high_ts=JSTK_HIGH_TRESHOLD,
+                       const uint16_t &_sig_low_ts=JSTK_LOW_TRESHOLD);
+    void run(uint32_t mls=0); //обработка сигналов джойстика
+    //void setTopPos(const jsHardPos _jhp){ jhpTop=_jhp; }; //установка верхней позиции джойстика
+    void setTopPos(const byte pin, const bool plus);//установка позиции по номеру пина и уровня сигнала
+    jsPos getAxisPosition(const JoystickAxis &ja, const bool plus);
+    inline virtual void onClick(const jsPos jsp){};
+    inline virtual void onHold(const jsPos jsp){};
+    inline virtual void onLongHold(const jsPos jsp){};
+    inline virtual void onIdle(const jsPos jsp){};
+    inline virtual void offClick(const jsPos jsp){};
+    inline virtual void offHold(const jsPos jsp){};
+    inline virtual void offLongHold(const jsPos jsp){};
+    inline virtual void offIdle(const jsPos jsp){};
+  private:
+    JoystickAxis jsAxisX,jsAxisY;
+    JoystickButton bt; //кнопка джойстика
+    byte x_pin,y_pin; //пины осей
+    jsHardPos jhpTop=jhpY_PLUS;//верхнее положение джойстика, по умолчанию Y+
 };
+
 
 #endif
