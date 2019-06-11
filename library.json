@@ -1,6 +1,6 @@
 {
-  "name": "DigitalButton",
-  "keywords": "button, abstract class, oop",
+  "name": "ArduinoButtons",
+  "keywords": "button, joystick, abstract class, oop",
   "description": "The DigitalButton, AnalogButton, Joystick abstract classes for designing custom manipulators in Arduino sketches.",
   "repository": {
     "type": "git",
