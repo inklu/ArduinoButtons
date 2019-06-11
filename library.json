@@ -1,15 +1,15 @@
 {
-  "name": "SmartButton",
-  "keywords": "button, abstract class, oop",
-  "description": "The SmartButton abstract class for using custom buttons in Arduino sketches.",
+  "name": "ArduinoButtons",
+  "keywords": "button, joystick, abstract class, oop",
+  "description": "The DigitalButton, AnalogButton, Joystick abstract classes for designing custom manipulators in Arduino sketches.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nw-wind/SmartButton"
+    "url": "https://github.com/inklu/ArduinoButtons"
   },
   "version": "1.0.0",
   "authors": {
-    "name": "Sergei Keler",
-    "url": "https://github.com/nw-wind"
+    "name": "Igor Klyushnyov",
+    "url": "https://github.com/inklu"
   },
   "frameworks": "arduino",
   "platforms": "*"
