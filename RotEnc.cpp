@@ -18,13 +18,13 @@ void RotEnc::run(unsigned long _mls){
   byte newSig = readSig();
   if (getPinSig(newSig,epDT)!=getPinSig(oldSig,epDT) && getPinSig(newSig,epCLK)==getPinSig(oldSig,epCLK)) { 
     if (getPinSig(newSig,epCLK)==getPinSig(newSig,epDT)) onClockwise();
-#ifdef __DEBUG__
+#ifdef DEBUG
     PRINTDEBUG
 #endif    
   }
   else if (getPinSig(newSig,epCLK)!=getPinSig(oldSig,epCLK) && getPinSig(newSig,epDT)==getPinSig(oldSig,epDT)) { 
     if (getPinSig(newSig,epCLK)==getPinSig(newSig,epDT)) onCounterclockwise();
-#ifdef __DEBUG__
+#ifdef DEBUG
     PRINTDEBUG
 #endif    
   }
