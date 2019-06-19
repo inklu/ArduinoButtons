@@ -4,6 +4,9 @@ void AnalogButton::run(unsigned long mls){
   //Serial.print("A");
   if (!mls) mls = millis();
   int ar = analogRead(btPin);
+#ifdef DEBUG
+  Serial.println(ar);
+#endif
   run(mls,ar);  
 }
 void AnalogButton::run(unsigned long mls,int ar){

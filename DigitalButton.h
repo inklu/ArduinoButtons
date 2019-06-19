@@ -65,28 +65,52 @@ class DigitalButton {
     bool checkEvent(buttonEvent evt){return btEvent&bit(evt);} //check the event //need to be revised
     void flushEvents(){btEvent=0;}			//reset the event //need to be revised
 
-    inline virtual void onClick() { //Serial.print(id);Serial.println(" onClick");
+    inline virtual void onClick() { 
+#ifdef DEBUG
+      Serial.print(id);Serial.println(" onClick");
+#endif
       //handle an event
     }
-    inline virtual void onHold() { //Serial.print(id);Serial.println(" onHold");
+    inline virtual void onHold() { 
+#ifdef DEBUG
+      Serial.print(id);Serial.println(" onHold");
+#endif
       //handle an event
     }
-    inline virtual void onLongHold() { //Serial.print(id);Serial.println(" onLongHold");
+    inline virtual void onLongHold() { 
+#ifdef DEBUG
+      Serial.print(id);Serial.println(" onLongHold");
+#endif
       //handle an event
     }
-    inline virtual void onIdle() { //Serial.print(id);Serial.println(" onIdle");
+    inline virtual void onIdle() { 
+#ifdef DEBUG
+      Serial.print(id);Serial.println(" onIdle");
+#endif
       //handle an event
 	}
-    inline virtual void offClick() { //Serial.print(id);Serial.println(" offClick");
+    inline virtual void offClick() { 
+#ifdef DEBUG
+      Serial.print(id);Serial.println(" offClick");
+#endif
       //handle an event
     }
-    inline virtual void offHold() { //Serial.print(id);Serial.println(" offHold");
+    inline virtual void offHold() { 
+#ifdef DEBUG
+      Serial.print(id);Serial.println(" offHold");
+#endif
       //handle an event
     }
-    inline virtual void offLongHold() { //Serial.print(id);Serial.println(" offLongHold");
+    inline virtual void offLongHold() { 
+#ifdef DEBUG
+      Serial.print(id);Serial.println(" offLongHold");
+#endif
       //handle an event
     }
-    inline virtual void offIdle() { //Serial.print(id);Serial.println(" offIdle");
+    inline virtual void offIdle() { 
+#ifdef DEBUG
+      Serial.print(id);Serial.println(" offIdle");
+#endif
       //handle an event
     }
 };
