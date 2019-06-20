@@ -1,6 +1,10 @@
 #ifndef ROTENC_H
 #define ROTENC_H
 
+/*#ifndef DEBUG
+#define DEBUG
+#endif*/
+
 #if ARDUINO >= 100
   #include <Arduino.h>
 #else
