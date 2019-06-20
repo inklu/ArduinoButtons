@@ -26,6 +26,12 @@ class AnalogButton: public DigitalButton {
       if(sigValMin > 1023) sigValMin = 0;
       sigValMax = sigVal + tresh / 2;
       if(sigValMax > 1023) sigValMax = 1023;
+#ifdef DEBUG
+      Serial.print("SigValMin ");
+      Serial.println(sigValMin);
+      Serial.print("SigValMax ");
+      Serial.println(sigValMax);
+#endif
     }
     //setup button: analog pin, medium level of signal, [pin mode] = INPUT_PULLUP by default
     void setup(byte pin,uint16_t sigVal,uint8_t tresh=BUTTON_ANALOG_SIGNAL_TRESHOLD,int pm=INPUT_PULLUP){
@@ -33,6 +39,12 @@ class AnalogButton: public DigitalButton {
       if(sigValMin > 1023) sigValMin = 0;
       sigValMax = sigVal + tresh / 2;
       if(sigValMax > 1023) sigValMax = 1023;
+#ifdef DEBUG
+      Serial.print("SigValMin ");
+      Serial.println(sigValMin);
+      Serial.print("SigValMax ");
+      Serial.println(sigValMax);
+#endif
       btPin = pin;
       btPinMode = pm;
       pinMode(btPin,btPinMode);
