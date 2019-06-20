@@ -1,6 +1,10 @@
 #ifndef ANALOGBUTTON_H
 #define ANALOGBUTTON_H
 
+/*#ifndef DEBUG
+#define DEBUG
+#endif*/
+
 #if ARDUINO >= 100
   #include <Arduino.h>
 #else
@@ -26,13 +30,15 @@ class AnalogButton: public DigitalButton {
     //setup button: analog pin, medium level of signal, [pin mode] = INPUT_PULLUP by default
     void setup(byte pin,uint16_t sigVal,uint8_t tresh=BUTTON_ANALOG_SIGNAL_TRESHOLD,int pm=INPUT_PULLUP){
       sigValMin = sigVal - tresh / 2;
+      if(sigValMin > 1023) sigValMin = 0;
       sigValMax = sigVal + tresh / 2;
+      if(sigValMax > 1023) sigValMax = 1023;
       btPin = pin;
       btPinMode = pm;
       pinMode(btPin,btPinMode);
     }
     void run(unsigned long mls=0); //processing of button pin signals with pin reading
-    void run(unsigned long mls, int ar); //processing of the level of signal in ar parameter
+    void run(unsigned long mls, word ar); //processing of the level of signal in ar parameter
     //void onClick() {Serial.print(sigValMin);Serial.print("\t");Serial.print(id);Serial.println(" onClick");};
 };
 

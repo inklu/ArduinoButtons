@@ -4,10 +4,11 @@ byte DigitalButton::sid;
 
 void DigitalButton::run(unsigned long mls){
   if (!mls) mls = millis();
-  int btRead = digitalRead(btPin);
+  byte btRead = digitalRead(btPin);
+#ifdef DEBUG
+  Serial.print(id);Serial.print(" ");Serial.println(btRead);
+#endif
 
-  //Serial.print("S");
-  
   if (btRead == HIGH && btPinMode != INPUT_PULLUP || btRead == LOW && btPinMode == INPUT_PULLUP) DoAction(biPress,mls);
   else DoAction(biRelease,mls);
   if (mls - pressTimeStamp > DIGITAL_BUTTON_DEBOUNCE) DoAction(biWaitDebounce,mls);
@@ -27,15 +28,15 @@ void DigitalButton::DoAction(enum state &_btst, enum input in, unsigned long mls
       _btst = bsIdle;
       switch(st) {
         case bsClick:
-          bitSet(btEvent,beOffClick);
+          //bitSet(btEvent,beOffClick);
           offClick();
           break;
         case bsHold:
-          bitSet(btEvent,beOffHold);
+          //bitSet(btEvent,beOffHold);
           offHold();
           break;
         case bsLongHold:
-          bitSet(btEvent,beOffLongHold);
+          //bitSet(btEvent,beOffLongHold);
           offLongHold();
           break;
         case bsForcedIdle:
@@ -47,7 +48,7 @@ void DigitalButton::DoAction(enum state &_btst, enum input in, unsigned long mls
       switch(st) {
         case bsPreClick:
           _btst=bsClick;
-          bitSet(btEvent,beOnClick);
+          //bitSet(btEvent,beOnClick);
           onClick();
           break;
       }
@@ -56,7 +57,7 @@ void DigitalButton::DoAction(enum state &_btst, enum input in, unsigned long mls
       switch(st) {
         case bsClick:
           _btst = bsHold;
-          bitSet(btEvent,beOnHold);
+          //bitSet(btEvent,beOnHold);
           onHold();
           break;
       }
@@ -65,7 +66,7 @@ void DigitalButton::DoAction(enum state &_btst, enum input in, unsigned long mls
       switch(st) {
         case bsHold:
           _btst = bsLongHold;
-          bitSet(btEvent,beOnLongHold);
+          //bitSet(btEvent,beOnLongHold);
           onLongHold();
           break;
       }
