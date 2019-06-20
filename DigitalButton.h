@@ -1,6 +1,10 @@
 #ifndef DIGITALBUTTON_H
 #define DIGITALBUTTON_H
 
+/*#ifndef DEBUG
+#define DEBUG
+#endif*/
+
 #if ARDUINO >= 100
   #include <Arduino.h>
 #else
@@ -19,19 +23,19 @@
 #ifndef DIGITAL_BUTTON_IDLE
 #define DIGITAL_BUTTON_IDLE 10000
 #endif
-#ifndef BTNS_EVENTS
+/*#ifndef BTNS_EVENTS
 #define BTNS_EVENTS 8 //need to be revised
-#endif
+#endif*/
 
 //static const int BUTTON_ANALOG_SIGNAL_TRESHOLD = 10;
 //static const int analog_pins[] = {A0,A1,A2,A3,A4,A5};
 //enum pinType {analog,digital};
 //button events: Pressed, Debounce, DoubleClick, ...
-enum buttonEvent {beOnClick,beOffClick,beOnDblClick,beOffDblClick,beOnHold,beOffHold,beOnLongHold,beOffLongHold};
 
 //Button class for digital pin
 class DigitalButton {
   protected:
+    enum buttonEvent {beOnClick,beOffClick,beOnDblClick,beOffDblClick,beOnHold,beOffHold,beOnLongHold,beOffLongHold};
     static byte sid;
     byte id;		//ID of a button for debug purposes 1,2,3,...
     byte btPin;		//button input pin
@@ -43,8 +47,8 @@ class DigitalButton {
     enum input {biPress,biRelease,biWaitDebounce,biWaitHold,biWaitLongHold,biWaitIdle} 
       btInput = biRelease;
     unsigned long pressTimeStamp; //time when button is pressed
-    byte btEvent=0; //need to be revised
- 
+    /*byte btEvent=0; //need to be revised
+    */
     void DoAction(enum input in,unsigned long mls); //define an action & call an handler
     void DoAction(enum state &_btst, enum input in, unsigned long mls);
   public:
@@ -61,9 +65,10 @@ class DigitalButton {
       pinMode(btPin,btPinMode);
     } 
     virtual void run(unsigned long mls=0); //processing button events
-    byte getEvent(){return btEvent;}       //return button events //need to be revised
+    /*byte getEvent(){return btEvent;}       //return button events //need to be revised
     bool checkEvent(buttonEvent evt){return btEvent&bit(evt);} //check the event //need to be revised
     void flushEvents(){btEvent=0;}			//reset the event //need to be revised
+    */
 
     inline virtual void onClick() { 
 #ifdef DEBUG

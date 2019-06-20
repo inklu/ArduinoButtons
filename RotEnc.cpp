@@ -1,6 +1,7 @@
 #include "RotEnc.h"
 
 
+
 RotEnc::RotEnc(const byte _clkPin, const byte _dtPin, const byte _swPin, const byte _swMode): DigitalButton(_swPin,_swMode),
                                                                                               clkPin(_clkPin),
                                                                                               dtPin(_dtPin),
