@@ -1,4 +1,4 @@
-#include <Joystick.h>
+#include <AnalogJoystick.h>
 
 #ifndef CYCLE_STEP
 #define CYCLE_STEP (200)

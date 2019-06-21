@@ -1,5 +1,5 @@
-#ifndef JOYSTICK_H
-#define JOYSTICK_H
+#ifndef ANALOGJOYSTICK_H
+#define ANALOGJOYSTICK_H
 
 /*#ifndef DEBUG
 #define DEBUG
