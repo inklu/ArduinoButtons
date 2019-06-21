@@ -1,4 +1,4 @@
-#include "Joystick.h"
+#include <AnalogJoystick.h>
 
 /*#ifndef DEBUG
 #define DEBUG
