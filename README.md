@@ -3,7 +3,7 @@ Processing digital &amp; analog signals from buttons and joystick on arduino pla
 
 This project consist of three classes for processing buttons, joystick, rotary encoder manipulators signals on arduino platform.
 
-Virtual class DigitalButton is designed for processing digital signals of buttons.
+Virtual class DigitalButton is designed for processing digital signals of buttons. DigitalButton is based on the SmartButton class by Sergei Keler https://github.com/nw-wind/SmartButton.
 
 Virtual class AnalogButton is derived from DigitalButton and designed for processing analog signals of buttons. For instance it can be used for processing many buttons connected to single analog pin through resistors.
 
